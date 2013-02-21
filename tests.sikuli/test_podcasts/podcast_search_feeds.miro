@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0" xmlns:miro="http://www.getmiro.com/opml/subscriptions">
+	<head>
+		<title>Democracy Subscriptions</title>
+		<dateCreated>Mon, 11 Feb 2013 05:36:05 -0500;</dateCreated>
+		<dateModified>Mon, 11 Feb 2013 05:36:05 -0500;</dateModified>
+	</head>
+	<body>
+
+	    <outline text="TWO STUPID" 
+        	     type="rss" 
+        	     version="RSS2" 
+                     xmlUrl="http://qa.pculture.org/feeds_test/2stupidvideos.xml"/>
+       	    <outline text="Static List" 
+	             type="rss" 
+                     version="RSS2" 
+	             xmlUrl="http://qa.pculture.org/feeds_test/list-of-guide-feeds.xml"/>
+	    <outline text="ThreeBlip" 
+	             type="rss" 
+                     version="RSS2" 
+	             xmlUrl="http://qa.pculture.org/feeds_test/3blipvideos.xml"/>
+
+    </body>
+</opml>
