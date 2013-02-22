@@ -84,11 +84,7 @@ class TestCaseDeletePodcasts(BaseTestCase):
         self.sidebar.click_podcast(feed)
         type(Key.DOWN,  KeyModifier.SHIFT)
         type(Key.DOWN,  KeyModifier.SHIFT)
-        if (self.mainview.m.exists("Delete",4) or
-            self.mainview.m.exists("button_mv_delete_all.png",4)):
-            click(self.mainview.m.getLastMatch())
-        else:
-            self.fail("Can't find Delete All button in main view")
+        self.mainview.add_to_folder_or_delete('delete')
         self.dialog.remove_confirm("cancel")
         self.sidebar.click_podcast(feed)
         assert_true (self.sidebar.exists_podcast("Center"))

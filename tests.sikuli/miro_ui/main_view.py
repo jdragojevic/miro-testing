@@ -22,10 +22,20 @@ class MainView(MiroApp):
     _SEARCH = {'clear': 'tabsearch_clear.png',
                'inactive': 'tabsearch_inactive.png'}
 
+    _SELECTED_PODCASTS = {'folder': 'New Folder',
+                          'delete': Pattern('button_mv_delete_all.png')}
+
     def click_item(self, title):
         self.tab_search(title)
         self.m.click(title)
         self.clear_search()
+
+    def add_to_folder_or_delete(self, action):
+        button = self._SELECTED_PODCASTS[action]
+        if self.m.exists(button, 4):
+            click(self.m.getLastMatch())
+        else:
+            self.fail("Can't find %s button in main view" % button)
 
 
     def hybrid_filter(self):

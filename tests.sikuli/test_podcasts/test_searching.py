@@ -21,7 +21,6 @@ class TestCasePodcastSearching(BaseTestCase):
         cls.dialog = Dialogs(cls.reg)
         subscribe_file = (os.path.abspath(os.path.join('tests.sikuli',
                              'test_podcasts', 'podcast_search_feeds.miro')))
-        print subscribe_file
         cls.dialog.import_opml(subscribe_file)
 
     def test_save_search_feed(self):

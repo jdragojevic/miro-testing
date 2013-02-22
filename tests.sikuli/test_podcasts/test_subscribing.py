@@ -78,6 +78,20 @@ class TestCaseSubscribePodcasts(BaseTestCase):
         self.mainview.download_all_items()
         assert_equal('in_progress', self.mainview.check_download_started())
 
+
+    @attr('current')
+    def test_argss_in_enclosure_url(self):
+        """Items download from feed with arguments in the item url.
+
+           Ref: http://bugzilla.pculture.org/show_bug.cgi?id=19540
+        """
+        self.feeds = ['Le fait']
+        url = "http://www.rtl.fr/podcast/le-fait-politique.xml"
+        feed = "Le fait"
+        self.sidebar.add_feed(url, feed)
+        self.mainview.download_all_items()
+        assert_equal('in_progress', self.mainview.check_download_started())
+
     def test_add_duplicate(self):
         url = "http://qa.pculture.org/feeds_test/feed1.rss"
         feed = "Yah"

@@ -29,17 +29,30 @@ class Dialogs(MiroApp):
         type(new_name)
         type(Key.ENTER)
 
+    def create_feed_folder(self, folder):
+        self.open_sidebar_menu()
+        self.tl.click('New Folder')
+        type(folder)
+        type(Key.ENTER)
+
+    def feeds_in_confirmation(self, feeds):
+        feed_list = []
+        for dialog_text in self._REMOVE_CONFIRMATION_DIALOGS:
+            if exists(dialog_text, 2):
+                d = getLastMatch().nearby(500)
+                break
+        else:
+            raise ValueError("Did not get the confirmation dialog")
+        for feed in feeds:
+            if d.exists(feed):
+                 feed_list.append(feed) 
+        return feed_list
 
     def remove_confirm(self, action="remove"):
         """If the remove confirmation is displayed, remove or cancel.
 
         action = (remove_feed, remove_item or cancel)
         """
-#        for dialog_text in self._REMOVE_CONFIRMATION_DIALOGS:
-#            if exists(dialog_text, 2):
-#                break
-#        else:
-#            raise ValueError("Did not get the confirmation dialog")
         if action == "remove":
             type(Key.ENTER)
         elif action == "delete_item":
