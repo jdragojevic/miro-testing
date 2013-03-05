@@ -19,7 +19,6 @@ class TestCasePodcastSettings(BaseTestCase):
         cls.mainview = MainView(cls.reg)
         cls.dialog = Dialogs(cls.reg)
 
-
     def test_clear_old_items(self):
         """Use podcast settings dialog to clear out old items. """
         url = "http://bluesock.org/~willg/cgi-bin/newitemsfeed.cgi"
