@@ -4,13 +4,16 @@ import subprocess
 import os
 import time
 import shutil
+import logging
 
 class BaseTestCase(object):
 
     @classmethod
     def setUpClass(cls):
-#        Settings.ActionLogs = False
-#        Settings.InfoLogs = False
+        cls.logger = logging.getLogger('test_steps')
+        cls.logger.setLevel(logging.INFO)
+        Settings.ActionLogs = False
+        Settings.InfoLogs = False
 #        Settings.DebugLogs = False
         oses = ['LINUX', 'WINDOWS', 'MAC']
         cls.sysos = [o for o in oses if o in str(Env.getOS())][0]
@@ -27,13 +30,7 @@ class BaseTestCase(object):
         cls.reset_db()
 
     def tearDown(self):
-        try:
-            for f in self.feeds:
-                if self.sidebar.exists_podcast(f):
-                    self.sidebar.delete_podcast(f)
-                    self.dialog.remove_confirm()
-        except AttributeError:
-            pass 
+        type(Key.ESC)
 
     @classmethod
     def quit_miro(cls):
@@ -84,21 +81,25 @@ class BaseTestCase(object):
 
     @classmethod
     def get_db(cls):
+        return os.path.join(cls.get_support_dir(), 'sqlitedb')
+
+    @classmethod
+    def get_support_dir(cls):
         if cls.sysos == 'WINDOWS':
             return os.path.join((os.getenv("APPDATA"),
                                  "Participatory Culture Foundation",
-                                 "Miro","Support","sqlitedb"))
+                                 "Miro","Support"))
         if cls.sysos == 'MAC':
             return os.path.join(os.getenv("HOME"), "Library", 
-                                "Application Support", "Miro","sqlitedb")
+                                "Application Support", "Miro")
         if cls.sysos == 'LINUX':
-            return os.path.join(os.getenv("HOME"),".miro","sqlitedb")
+            return os.path.join(os.getenv("HOME"),".miro")
+
 
     @classmethod
     def reset_db(cls, db=None):
         if db is None:
-            db = os.path.join(os.getcwd(), 'tests.sikuli', 'TestData',
-                              'databases', 'empty_db')
+            db = os.path.join(os.getcwd(), 'Data', 'databases', 'empty_db')
         curr_db = cls.get_db()
         shutil.copy(db, curr_db)
         if os.path.exists(db + 'wal'):
@@ -107,14 +108,21 @@ class BaseTestCase(object):
             if os.path.exists(curr_db + '-wal'):
                 os.unlink(curr_db + '-wal')
 
-
+    @classmethod
+    def remove_http_auth_file(cls):
+        auth_file = os.path.join(cls.get_support_dir(), "httpauth")
+        if os.path.exists(auth_file):
+            auth_saved = True
+            cls.quit_miro()
+            os.remove(auth_file)
+            cls.launch_miro()
 
     @classmethod
     def launch_miro(cls):
         if cls.sysos == 'LINUX':
             #App.focus('miro')
             subprocess.Popen('miro')
-#r'./run.sh', cwd=os.getenv('MIRONIGHTLYDIR'))
+            #r'./run.sh', cwd=os.getenv('MIRONIGHTLYDIR'))
             print 'launching Miro on linux'
             time.sleep(10)
             return 

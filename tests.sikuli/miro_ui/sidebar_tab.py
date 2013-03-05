@@ -7,6 +7,7 @@ from miro_ui import MiroApp
 class SidebarTab(MiroApp):
     _FIXED_LIB_TABS_IMG = "sidebar_top.png"
     _FIXED_TABS = ["Miro", "Videos", "Music"]
+    _HIDEABLE_TABS = ["Misc", "Downloading", "Converting"]
     _MOVEABLE_TABS = ["Misc", "Downloading", "Converting", "Search", "Connect"]
     _EXPANDABLE_TABS = ["Sources", "Stores", "Podcasts", "Playlists"]
 
@@ -65,29 +66,28 @@ class SidebarTab(MiroApp):
         click(Pattern(self._FIXED_LIB_TABS_IMG).similar(0.5))
         if tabloc.exists(tab, 2):
             return Region(tabloc.getLastMatch())
-        else:
-            type(Key.DOWN)
-            tabloc.find(tab)
-            return Region(tabloc.getLastMatch())
-
+        if tab in self._HIDEABLE_TABS:
+            self.logger.info('Tab %s is not displayed' % tab)
 
     def click_library_tab(self, tab):
         self.logger.info('Clicking the %s tab' % tab)
         tr =  self.find_library_tab(tab)
-        click(tr)
-        return tr
+        if tr:
+            click(tr)
+            return tr
 
     def click_podcast(self, podcast):
         self.logger.info('Clicking the podcast: %s' % podcast)
         podcast_region = self._expandable_tab_region("Podcasts")
-        podcast_region.wait(podcast, 25)
-        podcast_region.click(podcast)
-        return Region(podcast_region.getLastMatch())
+        if podcast_region.exists(podcast, 25):
+            click(podcast_region.getLastMatch())
+            return Region(podcast_region.getLastMatch())
 
     def exists_podcast(self, podcast):
         self.logger.info('Checking if feed %s in sidebar' %podcast)
         podcast_region = self._expandable_tab_region("Podcasts")
-        return exists(podcast)
+        if podcast_region.exists(podcast, 10):
+            return podcast_region.getLastMatch()
 
     def click_playlist(self, playlist):
         self.logger.info('Clicking the %s playlist tab' % playlist)

@@ -261,24 +261,6 @@ class MiroApp(object):
         if exists("sys_open_alert.png",30):
             click("sys_ok_button.png")
 
-
-    def delete_site(self, reg, site):
-        """Delete the video feed from the sidebar.
-        feed = the feed name exact text that is displayed in the sidebar.
-        m = Mainview Region, calculate in the testcase on launch.
-        s = Sideview Region, calculated in the testcase on launch.
-        """
-        p = self.get_sources_region(reg)
-        if p.exists(site,15):
-            click(p.getLastMatch())
-            time.sleep(2)
-            type(Key.DELETE)
-            self.remove_confirm(reg, "remove")
-        else:
-            print "site not present: ",site
-
-
-
     def add_playlist(self, reg, playlist, style="menu"):
         """Add a playlist miro using 1 of the following styles:
 
@@ -325,30 +307,12 @@ class MiroApp(object):
         else:
             print "not found"
 
-    def delete_all_podcasts(self, reg):
-        p = self.get_podcasts_region(reg)
-        time.sleep(5)
-        pody = p.getY()+40
-        top_podcast = Location(p.getX(),pody)
-        reg.s.find("Playlists")
-        if (reg.s.getLastMatch().getY() - pody) > 100:
-            click(reg.s.getLastMatch().above(35))
-            keyDown(Key.SHIFT)
-            click(top_podcast)
-            keyUp(Key.SHIFT)
-            if reg.m.exists("Delete",4) or reg.m.exists(Pattern("button_mv_delete_all.png"),4):
-                click(reg.m.getLastMatch())
-                time.sleep(2)
-                type(Key.ENTER)
-
-
     def open_podcast_settings(self, reg):
         b = Region(reg.s.getX(),reg.m.getY()*2,reg.m.getW(), reg.m.getH())
         b.find(Pattern("button_settings.png"))
         click(b.getLastMatch())
 
-    def click_remove_podcast(self, reg):
-        reg.m.click(Pattern("button_remove_podcast.png"))
+
 
     def change_podcast_settings(self, reg, option, setting):
         find("Expire Items")
@@ -368,18 +332,6 @@ class MiroApp(object):
         time.sleep(2)
         p1.click("button_done.png")
 
-
-    def delete_items(self, reg, title, item_type):
-        """Remove video audio music other items from the library.
-
-        """
-        type(Key.ESC)
-        self.click_sidebar_tab(reg, item_type)
-        self.tab_search(reg, title)
-        if reg.m.exists(title,10):
-            click(reg.m.getLastMatch())
-            type(Key.DELETE)
-            self.remove_confirm(reg, "delete_item")
 
     def delete_current_selection(self, reg):
         """Wherever you are, remove what is currently selected.
@@ -499,30 +451,6 @@ class MiroApp(object):
         self.log_result("102","stop video playback shortcut verified.")
 
 
-
-    def http_auth(self, reg, username="tester", passw="pcfdudes"):
-        mr = Region(reg.mtb.above(100).below())
-        if not mr.exists("Username",30):
-            print "http auth dialog not found"
-        else:
-            type(username)
-            type(Key.TAB)
-            type(passw)
-            mr.click("button_ok.png")
-            time.sleep(3)
-
-    def remove_http_auth_file(self, reg):
-        auth_file = os.path.join(config.get_support_dir(),"httpauth")
-        self.quit_miro(reg)
-        time.sleep(5)
-        if os.path.exists(auth_file):
-            auth_saved = True
-            os.remove(auth_file)
-            self.restart_miro()
-        else:
-            print "no auth file found"
-            auth_saved = False
-        return auth_saved
 
     def convert_file(self, reg, out_format):
         if self.os_name == "osx":

@@ -21,9 +21,15 @@ class MainView(MiroApp):
 
     _SEARCH = {'clear': 'tabsearch_clear.png',
                'inactive': 'tabsearch_inactive.png'}
+    DEFAULT_VIDEO_THUMB = Pattern('thumb-default-video.png')
+    _PLAYBACK_NORMAL = Pattern('item-renderer-play.png')
 
+    #PODCAST TABS
     _SELECTED_PODCASTS = {'folder': 'New Folder',
                           'delete': Pattern('button_mv_delete_all.png')}
+    #DOWNLOADING TAB
+    _CANCEL_ALL_DOWNLOADS = Pattern('download-cancel.png')
+
 
     def click_item(self, title):
         self.tab_search(title)
@@ -55,17 +61,15 @@ class MainView(MiroApp):
                 break
         click(self.m.getLastMatch().left(25))
 
-    def settings(self, action='click'):
+    def open_podcast_settings(self):
         self.m.find(self._BUTTONS['Settings'])
-        if action == 'click':
-            click(self.m.getLastMatch())
+        click(self.m.getLastMatch())
 
-    def save_as_a_podcast(self, action='click'):
+    def save_as_a_podcast(self):
         img = Pattern(self._BUTTONS["Save as Podcast"])
         self.logger.info('Looking for %s' % img)
-        self.mr.exists(img, 10)
-        if action == 'click':
-            click(self.mr.getLastMatch())
+        exists(img, 20)
+        click(getLastMatch())
 
     def autodownload(self, action='click'):
         self.m.find(self._BUTTONS["Autodownload"])
@@ -115,16 +119,14 @@ class MainView(MiroApp):
                    b.click(self._BUTTONS["Autodownload"])
                    time.sleep(2)
 
-    def set_podcast_settings(self, setting):
-        self.settings("click")
-        self.dialog.change_podcast_settings(setting)
+    def click_remove_podcast(self):
+        self.m.find(self._BUTTONS['Remove Podcast'])
+        click(self.m.getLastMatch())
 
     def delete_items(self, title, item_type):
         """Remove video audio music other items from the library.
 
         """
-        type(Key.ESC)
-        self.sidebar.click_library_tab(item_type)
         self.tab_search(title)
         if self.m.exists(title,10):
             click(self.m.getLastMatch())
@@ -142,35 +144,50 @@ class MainView(MiroApp):
         """enter text in the search box.
 
         """
-        print "searching within tab"
-        time.sleep(3)
-        if self.mtb.exists(self._SEARCH["clear"] ,5):
-            print "found tabsearch_clear"
-            click(self.mtb.getLastMatch())
-            click(self.mtb.getLastMatch().left(10))
-        elif self.mtb.exists(self._SEARCH["inactive"] ,5):
-            print "found tabsearch_inactive"
-            self.mtb.click(self._SEARCH["inactive"])
-        else:
-            print "can not find the search box"
-        time.sleep(2)
-        print "Entering search text"
-        type(title.upper())
-        time.sleep(3)
+        self.logger.info('Searching current tab for %s' % title)
+        self.enter_search_box_text(title.upper())
         if confirm_present != False:
-            self.toggle_normal()
-            if self.m.exists(title, 5):
-                present=True
+            term = title.split()[-1].upper()
+            if self.m.exists(term, 5):
+                return True
             elif self.m.exists(Pattern("item-context-button.png")):
-                present=True
+                return True
             else:
-                print("Item %s not found in the tab" % title)
-            return present
+                self.logger.info("Item %s not found in the tab" % title)
+            return False
+
+    def enter_search_box_text(self, term):
+        search_box = self.clear_search()
+        if search_box is not None:
+            click(search_box)
+        else:
+            self.mtb.click(self._SEARCH["inactive"])
+        type(term)
+
 
     def clear_search(self):
         if self.mtb.exists(self._SEARCH["clear"] ,5):
-            print "found tabsearch_clear"
+            self.logger.info('clearing search text')
             click(self.mtb.getLastMatch())
+            return self.mtb.getLastMatch().left(10)
+
+    def search_tab_search(self, term, engine=None):
+        """perform a search in the search tab.  """
+        self.enter_search_box_text(term.upper())
+        # Use the search text to create a region for specifying the search engine
+        if not engine:
+            type(Key.ENTER)
+        else:
+            l = self.mtb.find(term.upper())
+            l1= Region(int(l.getX()-20), l.getY(), 8, 8,)
+            click(l1)
+            l2 = Region(int(l.getX()-15), l.getY(), 300, 600,)
+            if engine == "YouTube":
+                l3 = Region(l2.find("YouTube User").above())
+                l3.click(engine)
+            else:
+                l2.click(engine)
+            type("\n") #enter the search
 
 
     def expand_item_details(self):
@@ -208,35 +225,6 @@ class MainView(MiroApp):
         if treg.exists(Pattern("list-view.png").similar(.91),3):
             click(treg.getLastMatch())
 
-    def search_tab_search(self, term, engine=None):
-        """perform a search in the search tab.
-
-        Requires: search term (term), search engine(engine) and MainViewTopRegion (mtb)
-
-        """
-        print "starting a search tab search"
-        # Find the search box and type in the search text
-        if self.mtb.exists("tabsearch_clear.png",5): # this should always be found on gtk
-            print "found the broom"
-            click(self.mtb.getLastMatch())
-            click(self.mtb.getLastMatch().left(10))
-        elif self.mtb.exists("tabsearch_inactive.png",5):
-            click(self.mtb.getLastMatch())
-        type(term.upper())
-        # Use the search text to create a region for specifying the search engine
-        if engine != None:
-            l = self.mtb.find(term.upper())
-            l1= Region(int(l.getX()-20), l.getY(), 8, 8,)
-            click(l1)
-            l2 = Region(int(l.getX()-15), l.getY(), 300, 500,)
-            if engine == "YouTube":
-                l3 = Region(l2.find("YouTube User").above())
-                l3.click(engine)
-            else:
-                l2.click(engine)
-            type("\n") #enter the search
-        else:
-            type("\n")
 
     def download_all_items(self):
         print "downloading all the items"
@@ -248,9 +236,8 @@ class MainView(MiroApp):
                 mm.append(f.next())     # access next match and add to mm
             for x in mm:
                 click(x)
-                time.sleep(1)
         else:
-            print "no badges found, maybe autodownloads in progress"
+            self.logger.info('No donwload badges found') 
 
     def check_download_started(self, title=None):
         """Tries to verify the file download started.
@@ -260,7 +247,7 @@ class MainView(MiroApp):
         if title is not None:
             self.tab_search(title)
         if self.m.exists(Pattern("badge_dl_error.png"),2):
-            downlaoded = "errors"
+            downloaded = "errors"
         elif self.m.exists(Pattern("item-renderer-download-pause.png"), 10):
             downloaded = "in_progress"
         else:
@@ -268,21 +255,16 @@ class MainView(MiroApp):
         return downloaded
 
 
-    def wait_download_complete(self, title, torrent=False):
+    def wait_download_complete(self, feed_dl=True):
         """Wait for a download to complete before continuing test.
 
         provide title - to verify item present itemtitle_'title'.png
 
         """
-        if not self.confirm_download_started(reg, title) == "downloaded":
-            if torrent == False:
-                if self.m.exists(title):
-                    self.m.waitVanish(title,240)
-            elif torrent == True:
-        #break out if stop seeding button found for torrent
-                for x in range(0,30):
-                    while not self.m.exists("item_stop_seeding.png"):
-                        time.sleep(5)
+        if self.m.exists(Pattern("item-renderer-download-pause.png"), .65):
+            waitVanish(self.m.getLastMatch(), FOREVER)
+        if feed_dl:
+            wait(Pattern('item_play_unplayed.png'), 300)
 
     def cancel_all_downloads(self):
         """Cancel all in progress downloads.
@@ -291,10 +273,8 @@ class MainView(MiroApp):
         Click off downloads tab and confirm tab disappears.
 
         """
-        if self.s.exists("Downloading",2):
-            click(self.s.getLastMatch())
-            self.mtb.wait(Pattern('download-cancel.png'))
-            self.mtb.click("download-cancel.png")
+        if self.mtb.exists(self._CANCEL_ALL_DOWNLOADS):
+            click(self.mtb.getLastMatch())
             if self.m.exists("Seeding"):
                 mm = []
                 f = self.m.findAll("button_download.png") # find all matches
@@ -304,16 +284,17 @@ class MainView(MiroApp):
                 for x in mm:
                     click(x)
 
-    def wait_for_item(self, item):
+    def wait_for_item(self, item, wait_time=90):
         """Search for the item and wait for it to display, or fail."""
         self.logger.info('Waiting for %s to display' % item)
         self.tab_search(item)
-        return self.m.wait(item, 90)
+        return self.m.wait(item, wait_time)
 
     def item_metadata(self, metadata):
         """Check for a  piece of metadata displayed in  main view."""
         self.logger.info("Checking for %s" % metadata)
-        return self.m.exists(metadata, 15)
+        if self.m.exists(metadata, 15):
+            return self.m.getLastMatch()
 
     def wait_conversions_complete(self, reg, title, conv):
         """Waits for a conversion to complete.
@@ -336,22 +317,18 @@ class MainView(MiroApp):
                 click(reg.mtb.getLastMatch())
             return status
 
-    def add_source_from_tab(self, reg, site_url):
-        p = self.get_sources_region(reg)
-        reg.m.find("URL")
-        click(reg.m.getLastMatch().right(150))
-        type(site_url+"\n")
+    def downloaded(self):
+        if self.m.exists(self._PLAYBACK_NORMAL):
+            return self.m.getLastMatch()
 
-
-    def verify_normalview_metadata(self, reg, metadata):
-        i = reg.mtb.below(300)
-        for k,v in metadata.iteritems():
-            if not(i.exists(v,3)):
-                print("expected metadata not found")
+    def start_playback(self, title):
+        self.tab_search(title)
+        type(Key.TAB)
+        type(Key.ENTER)
 
     def verify_video_playback(self, title):
         playback = False
-        self.m.doubleClick(title)
+        self.start_playback(title)
         if exists(Pattern("playback_bar_video.png"), 5):
             playback = True
             self.shortcut("d")
@@ -365,15 +342,9 @@ class MainView(MiroApp):
             playback = False
         return playback
 
-    def stop_audio_playback(self, reg, title):
-        reg.m.click(title)
+    def stop_audio_playback(self, title):
+        self.m.click(title)
         self.shortcut("d")
-        reg.m.waitVanish("item_currently_playing.png",20)
-        self.log_result("102","stop audio playback shortcut verified.")
+        self.m.waitVanish("item_currently_playing.png",20)
 
-    def open_podcast_settings(self):
-        b = self.m
-        b.setY(b.getY()*2)
-        b.find(Pattern("button_settings.png"))
-        click(b.getLastMatch())
 

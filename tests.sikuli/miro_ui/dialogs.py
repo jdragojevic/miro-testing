@@ -1,4 +1,7 @@
 #!/usr/bin/python
+
+import time
+
 from sikuli.Sikuli import *
 from miro_ui import MiroApp
 
@@ -22,6 +25,15 @@ class Dialogs(MiroApp):
 
     def open_sidebar_menu(self):
         self.tl.click('idebar')
+
+    def download_from_a_url(self, url):
+        self.tl.wait("File", 10)
+        self.tl.click("File")
+        self.tl.click("Download from")
+        time.sleep(2)
+        type(url)
+        type(Key.ENTER)
+
 
     def rename_podcast(self, new_name):
         self.open_sidebar_menu()
@@ -83,8 +95,6 @@ class Dialogs(MiroApp):
                     type(Key.ESC)
         return downloaded
 
-
-
     def edit_item_type(self, new_type, old_type):
         """Change the item's metadata type, assumes item is selected.
 
@@ -106,7 +116,7 @@ class Dialogs(MiroApp):
             mouseMove(new_type)
             mouseUp(Button.LEFT)
         time.sleep(2)
-        click("button_ok.png")
+        click(self._OK)
 
     def edit_item_rating(self, rating):
         """Change the item's metadata type, assumes item is selected.
@@ -117,7 +127,7 @@ class Dialogs(MiroApp):
         for x in range(0,int(rating)):
             type(Key.DOWN)
         type(Key.ENTER)
-        click("button_ok.png")
+        click(self._OK)
 
 
     def edit_item_general_metadata(self, new_metadata):
@@ -236,9 +246,10 @@ class Dialogs(MiroApp):
             self.logger.info("Accepting default settings.")
             type(Key.ENTER)
             return
+        #self.m.find('Search for')
         wait('Create Podcast', 10)
-        f = Region(getLastMatch().left(600).above(300))
         if watched:
+            f = Region(getLastMatch().left(600).above(300))
             self.logger.info('Watched feeds should not be listed.')
             if f.exists(source):
                 type(Key.ESC)
@@ -246,12 +257,17 @@ class Dialogs(MiroApp):
             else:
                 return True
         self.logger.info("Entering the search term: %s" % term)
-        type(term)
-        f = Region(getLastMatch().left(600).above(300))
-        self.logger.info("Clicking the %s radio button" %radio)
+        type(term.upper())
+        self.m.find(term.upper())
+        f = self.m.getLastMatch().below(400)
+        f.setW(600)
+        f.setX(f.getX()-200)
+        self.logger.info(f)
+
+        self.logger.info("Clicking the %s radio button" % radio)
         f.click(radio)
         if radio == "URL":
-            click(f.getLastMatch().right(150))
+            click(f.getLastMatch().right(180))
             type(source)
         else:
             self.logger.info('Choosing the feed %s as search source' % source)
@@ -272,10 +288,7 @@ class Dialogs(MiroApp):
         type(folder_path)
         if not show:
             self.m.click("Show in")
-            type(Key.TAB)
-            type(Key.TAB)
-        type(Key.ENTER)
-
+        type(Key.ENTER) 
 
     def open_file(self, filename):
         self.shortcut('o')
@@ -288,3 +301,15 @@ class Dialogs(MiroApp):
         if exists("imported", 15):
             type(Key.ENTER)
 
+    def password_dialog(self):
+        mr = Region(self.mtb.above(100).below())
+        return mr.exists("Username",30)
+
+    def http_auth(self, username="tester", passw="pcfdudes"):
+        if not self.password_dialog():
+            print "http auth dialog not found"
+        else:
+            type(username)
+            type(Key.TAB)
+            type(passw)
+            click(self._OK)

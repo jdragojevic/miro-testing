@@ -6,23 +6,6 @@ import subprocess
 def start_ff_on_linux():
     subprocess.Popen(r'firefox', cwd='/usr/bin/')
 
-def get_support_dir():
-    if get_os_name() == "win":
-        ver = Env.getOSVersion()
-        wv = ver.split('.')[0]
-        if int(wv) < 6:
-            support_dir = os.path.join(os.getenv("USERPROFILE"),"Application Data","Participatory Culture Foundation","Miro","Support")
-            print support_dir
-        else:
-            support_dir = os.path.join(os.getenv("USERPROFILE"),"AppData","Roaming","Participatory Culture Foundation","Miro","Support")
-    elif get_os_name() == "lin":
-            support_dir = os.path.join(os.getenv("HOME"),".miro")
-    elif get_os_name() == "osx":
-            support_dir = os.path.join(os.getenv("HOME"),"Library","Application Support","Miro")
-
-    else:
-        print "no clue"
-    return support_dir
 
 def get_video_dir():
     if get_os_name() == "win":
@@ -41,21 +24,7 @@ def get_video_dir():
         print "no clue"
     return video_dir
 
-def replace_database(db):
-    """Replace sqlitedb with a different one.
-
-    """
-    miro_support_dir = get_support_dir()
-    dbfile = os.path.join(miro_support_dir,"sqlitedb")
-    try:
-        os.makedirs(miro_support_dir)
-    except OSError, e:
-        if e.errno != errno.EEXIST:
-            raise Exception("error replacing sqlitedb")
-    shutil.copy(db, dbfile)
-
 def reset_preferences():
-    datadir = os.path.join(proj_dir, "features", "terrain", "TestData","databases")
     if get_os_name() == "lin":
         preffile = os.path.join(datadir,"linux_prefs")
         reset_cmd = ["gconftool-2", "--load", preffile]
@@ -71,7 +40,6 @@ def reset_preferences():
         shutil.copy(preffile,prefs)
     else:
         print "don't have prefs for this os"
-        
 
 def delete_preferences():
     #completely ditch preferences on linux
@@ -90,7 +58,6 @@ def delete_preferences():
             os.unlink(preffile)
     else:
         print "don't know where preferences are"
-    
 
 def delete_database_and_prefs(dbonly=False):
         """Delete the miro support dir and preferences.
@@ -98,7 +65,6 @@ def delete_database_and_prefs(dbonly=False):
         On Windows, delete the entire Support dir. On OSX delete Support dir + preferences plist.
         On linux, delete Support dir, + unset gconf settings.
         """
-        
         miro_support_dir = get_support_dir()
         if dbonly == True:
             dbfile = os.path.join(miro_support_dir,"sqlitedb")
@@ -127,14 +93,11 @@ def set_def_db_and_prefs():
     replace_database(db)
     reset_preferences()
     time.sleep(5)
-    
-    
 
 def delete_miro_video_storage_dir():
         """Delete the Miro video storage directory.
 
         """
-    
         #Delete Miro default video storage
         miro_video_dir = get_video_dir()
         if os.path.exists(miro_video_dir):
@@ -147,7 +110,6 @@ def delete_miro_downloaded_files():
         """Delete the Miro video storage directory.
 
         """
-    
         #Delete Miro default video storage
         miro_video_dir = get_video_dir()
         if os.path.exists(miro_video_dir):
