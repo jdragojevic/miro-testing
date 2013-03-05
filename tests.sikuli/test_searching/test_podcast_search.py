@@ -10,7 +10,8 @@ from miro_ui.sidebar_tab import SidebarTab
 from miro_ui.main_view import MainView
 from miro_ui.dialogs import Dialogs
 
-@attr(tags=['podcast', 'search'])
+@attr('podcast')
+@attr('search')
 class TestCasePodcastSearching(BaseTestCase):
     @classmethod
     def setUpClass(cls):
@@ -27,13 +28,13 @@ class TestCasePodcastSearching(BaseTestCase):
         """Search in a podcast and save search as new podcast."""
 
         feed = "Static"
-        term = "Gimp"
-        title = "How"
+        term = "Brooklyn"
+        title = "Brooklyn"
         self.sidebar.click_podcast(feed)
         self.mainview.tab_search(term)
         self.mainview.save_as_a_podcast()
         self.sidebar.click_last("Podcasts")
-        assert_true(self.mainview.item_metadata(title))
+        assert_true(self.mainview.item_metadata(term))
         self.sidebar.delete_podcast()
         self.dialog.remove_confirm()
 
@@ -95,13 +96,12 @@ class TestCasePodcastSearching(BaseTestCase):
         self.sidebar.delete_podcast()
         self.dialog.remove_confirm()
 
-
     def test_watched_feeds(self):
         """Watched feeds are no included in saved search dialog sources list."""
         feed = "WatchTest"
         term = "monkey"
-        folder_path = os.path.abspath(os.path.join('tests.sikuli',
-                                      'TestData', 'WatchTest'))
+        folder_path = os.path.abspath(os.path.join(os.getcwd(),
+                                      'Data', 'WatchTest'))
         self.dialog.add_watched_folder(folder_path)
         self.sidebar.click_podcast("WatchTest")
         assert_true(self.dialog.new_search_feed(term, radio="Podcast", source=feed,
