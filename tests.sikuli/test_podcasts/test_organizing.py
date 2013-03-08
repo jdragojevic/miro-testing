@@ -13,7 +13,7 @@ from miro_ui.main_view import MainView
 from miro_ui.dialogs import Dialogs
 
 
-@attr(tags='podcast')
+@attr('podcast')
 class TestCaseRenameFeed(BaseTestCase):
     @classmethod
     def setUpClass(cls):
@@ -22,6 +22,7 @@ class TestCaseRenameFeed(BaseTestCase):
         cls.sidebar = SidebarTab(cls.reg)
         cls.mainview = MainView(cls.reg)
         cls.dialog = Dialogs(cls.reg)
+
 
     def test_rename(self):
         url = "http://qa.pculture.org/feeds_test/2stupidvideos.xml"

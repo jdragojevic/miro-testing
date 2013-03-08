@@ -2,6 +2,7 @@ from sikuli.Sikuli import *
 import nose
 import subprocess
 import os
+import stat
 import time
 import shutil
 import logging
@@ -12,14 +13,14 @@ class BaseTestCase(object):
     def setUpClass(cls):
         cls.logger = logging.getLogger('test_steps')
         cls.logger.setLevel(logging.INFO)
-        Settings.ActionLogs = False
-        Settings.InfoLogs = False
+#        Settings.ActionLogs = False
+#        Settings.InfoLogs = False
 #        Settings.DebugLogs = False
         oses = ['LINUX', 'WINDOWS', 'MAC']
         cls.sysos = [o for o in oses if o in str(Env.getOS())][0]
-        cls.reset_db()
         cls.set_image_dirs()
-        cls.launch_miro()
+        cls.miro_app = cls.launch_miro()
+        
 
         print 'setting up the image regions'
         cls.reg = cls.get_regions()
@@ -34,8 +35,12 @@ class BaseTestCase(object):
 
     @classmethod
     def quit_miro(cls):
-        os.system("killall -v -I Miro miro.real")
-
+        cls.miro_app.close()
+        time.sleep(3)
+        if cls.sysos == 'WINDOWS':
+            subprocess.Popen(r'TASKKILL /F /IM Miro.exe')
+        else:
+            os.system("killall -v -I miro")
 
     @classmethod
     def set_image_dirs(cls):
@@ -52,7 +57,7 @@ class BaseTestCase(object):
         click(Pattern("sidebar_top.png").similar(0.6))
         topx =  int(getLastMatch().getX())-25
         topy = int(getLastMatch().getY())-80
-        sidebar_width = 250
+        sidebar_width = 210
         sidex = sidebar_width+topx
         find("BottomCorner.png")
         vbarx =  int(getLastMatch().getX())+30
@@ -61,7 +66,7 @@ class BaseTestCase(object):
         app_height = int(vbary-topy)
         mainwidth = int((vbarx-sidex)+vbarw)
 
-        AppRegions = {"SidebarRegion": Region(topx,topy, sidebar_width,
+        AppRegions = {"SidebarRegion": Region(topx, topy, sidebar_width,
                       app_height),
                       "MainViewRegion": Region(sidex, topy+110, mainwidth,
                       app_height),
@@ -81,14 +86,16 @@ class BaseTestCase(object):
 
     @classmethod
     def get_db(cls):
-        return os.path.join(cls.get_support_dir(), 'sqlitedb')
+        support_dir = cls.get_support_dir()
+        return os.path.abspath(os.path.join(support_dir, 'sqlitedb'))
 
     @classmethod
     def get_support_dir(cls):
         if cls.sysos == 'WINDOWS':
-            return os.path.join((os.getenv("APPDATA"),
+            appdata = os.getenv("APPDATA")
+            return os.path.join(os.path.abspath(appdata),
                                  "Participatory Culture Foundation",
-                                 "Miro","Support"))
+                                 "Miro", "Support")
         if cls.sysos == 'MAC':
             return os.path.join(os.getenv("HOME"), "Library", 
                                 "Application Support", "Miro")
@@ -98,15 +105,21 @@ class BaseTestCase(object):
 
     @classmethod
     def reset_db(cls, db=None):
-        if db is None:
-            db = os.path.join(os.getcwd(), 'Data', 'databases', 'empty_db')
+        if db == None:
+            l = os.path.abspath(os.getcwd())
+            db = os.path.join(l, 'Data', 'databases', 'empty_db')
+            cls.logger.info(db)
         curr_db = cls.get_db()
+        cls.logger.info(curr_db)
         shutil.copy(db, curr_db)
-        if os.path.exists(db + 'wal'):
-            shutil.copy(db+'-wal', curr_db + '-wal')
+        currdb_wal = curr_db+'-wal'
+        if os.path.exists(db + '-wal'):
+            shutil.copy(db+'-wal', currdb_wal)
         else:
-            if os.path.exists(curr_db + '-wal'):
-                os.unlink(curr_db + '-wal')
+            if os.path.exists(currdb_wal):
+                os.chmod(currdb_wal, stat.S_IWRITE)
+                os.unlink(currdb_wal)
+        time.sleep(2)
 
     @classmethod
     def remove_http_auth_file(cls):
@@ -125,12 +138,13 @@ class BaseTestCase(object):
             #r'./run.sh', cwd=os.getenv('MIRONIGHTLYDIR'))
             print 'launching Miro on linux'
             time.sleep(10)
-            return 
+            return App('Miro')
         if cls.sysos == 'WINDOWS':
             app = os.path.join(os.getenv("PROGRAMFILES"),
                                "Participatory Culture Foundation","Miro","Miro.exe")
         if cls.sysos == 'MAC':
             app = '/Applications/Miro.app'
         App.focus(app)
+        return App('Miro')
 
 

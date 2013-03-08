@@ -40,12 +40,9 @@ class SidebarTab(MiroApp):
         tab_rg = Region(r.getLastMatch())
         topx = int(tab_rg.getX() * .5)
         topy = tab_rg.getY()
-        if self._EXPANDABLE_TABS.index(tab) + 1 >= len(self._EXPANDABLE_TABS):
-            height = self.s.getH() + 20
-        else:
-            self.s.find(self._EXPANDABLE_TABS[self._EXPANDABLE_TABS.index(tab)+1])
-            height = (tab_rg.getY() + 20) - Region(self.s.getLastMatch()).getY()
-        width = self.s.getW()
+        self.logger.info('TOPY: %s' %topy)
+        height = 500
+        width = r.getW()
         tab_region = Region(topx, topy, width, height)
         tab_region.setAutoWaitTimeout(20)
         return tab_region
@@ -79,6 +76,7 @@ class SidebarTab(MiroApp):
     def click_podcast(self, podcast):
         self.logger.info('Clicking the podcast: %s' % podcast)
         podcast_region = self._expandable_tab_region("Podcasts")
+        self.logger.info(podcast_region)
         if podcast_region.exists(podcast, 25):
             click(podcast_region.getLastMatch())
             return Region(podcast_region.getLastMatch())
@@ -124,8 +122,11 @@ class SidebarTab(MiroApp):
         self.logger.info("Adding the podcast: %s" % url)
         self.shortcut('n')
         time.sleep(2)
-        type(url + "\n")
-        if click_feed: self.click_podcast(feed)
+        type(url)
+        type(Key.ENTER)
+        if click_feed:
+            self.logger.info('clicking the feed %s' % feed)
+            self.click_podcast(feed)
 
     def delete_podcast(self, podcast=None):
         """Delete a podcast from the sidebar tab."""

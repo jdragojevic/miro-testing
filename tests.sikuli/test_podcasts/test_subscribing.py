@@ -11,6 +11,7 @@ from miro_ui.sidebar_tab import SidebarTab
 from miro_ui.main_view import MainView
 from miro_ui.dialogs import Dialogs
 
+
 @attr('podcast')
 class TestCaseSubscribePodcasts(BaseTestCase):
     @classmethod
@@ -56,11 +57,12 @@ class TestCaseSubscribePodcasts(BaseTestCase):
         for d in data_checks.items():
             yield self.check_podcast_metadata, d
 
+
     def test_no_enclosures(self):
         """RSS 2.0 feed with no enclosures, video 2 should not display.
         """
         url = "http://qa.pculture.org/feeds_test/no-enclosures.rss"
-        feed = "No enclosures"
+        feed = "NO ENCLOSURES"
         self.sidebar.add_feed(url, feed)
         data_checks = {'description': 'should work',
                        'title': 'Video',
@@ -69,15 +71,16 @@ class TestCaseSubscribePodcasts(BaseTestCase):
             yield self.check_podcast_metadata, d
         yield self.item_not_present, "second test"
 
+
     def test_file_url(self):
         """Add a podcast with a file:/// url. """
         url_path = os.path.join(os.getcwd(), "Data", "feeds", "youtube-feed.rss")
         url = "file://"+url_path
         feed = "AL JAZEERA"
-        title = "Alarm"
+        data = ('title', 'Alarm')
         self.sidebar.add_feed(url, feed)
-        self.mainview.tab_search(title)
-        assert_true(self.check_podcast_metadata({'title': title}))
+        self.mainview.tab_search(data[1])
+        yield self.check_podcast_metadata, data
 
     def test_add_duplicate(self):
         url = "http://qa.pculture.org/feeds_test/feed1.rss"
@@ -93,11 +96,11 @@ class TestCaseSubscribePodcasts(BaseTestCase):
 
         """
         self.remove_http_auth_file()
-        feed = "Passworded"
+        feed = "PW PROTECTED"
         url = 'http://qa.pculture.org/feeds_test/password.rss'
         self.sidebar.add_feed(url, feed, click_feed=False)
         self.dialog.http_auth('tester', 'pcf-is-the-best')
         assert_true(self.dialog.password_dialog())
         self.dialog.http_auth('pcf', 'pcf.miro')
-        assert_true(self.sidebar.exists_podcast(feed))
+        assert_true(self.sidebar.exists_podcast(feed[1:]))
 

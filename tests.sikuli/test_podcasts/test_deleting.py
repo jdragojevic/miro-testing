@@ -9,7 +9,9 @@ from miro_ui.sidebar_tab import SidebarTab
 from miro_ui.main_view import MainView
 from miro_ui.dialogs import Dialogs
 
-@attr(tags=['podcast'])
+
+@attr('current')
+@attr('podcast')
 class TestCaseDeletePodcasts(BaseTestCase):
     @classmethod
     def setUpClass(cls):
@@ -97,7 +99,7 @@ class TestCaseDeletePodcasts(BaseTestCase):
                "participatoryculture.org%2Ffeeds_test%2Ffeed1.rss")
         feed = "subscribe"
         self.sidebar.add_feed(url, feed, click_feed=False)
-        if exists("anyway",45):
+        if self.mainview.m.exists("anyway",15) or self.mainview.m.exists('Yes'):
             type(Key.ENTER)
         self.sidebar.click_last("Podcasts")
         type(Key.DELETE)
