@@ -63,6 +63,8 @@ class TestCaseFeedDownloads(BaseTestCase):
         self.sidebar.click_podcast(feed)
         self.mainview.download_all_items()
         self.check_downloading()
+        self.click_library_tab("Downloading")
+        self.mainview.cancel_all_downloads()
 
     def test_args_in_enclosure_url(self):
         """Items download from feed with arguments in the item url.
@@ -123,15 +125,16 @@ class TestCaseFeedDownloads(BaseTestCase):
         """Add feed and download item with non-ascii titles. """
         feed = "UNICODE"
         title = "kerta"
+        term = "1991"
         thumb = "non_ascii_item.png"
 
-        self.mainview.tab_search(title)
+        self.mainview.tab_search(term)
         self.mainview.download_all_items()
         self.check_downloading(title)
         self.mainview.wait_download_complete()
         yield self.check, 'playback', title
         yield self.check, 'thumbnail', thumb
-        yield self.check, 'title' , title
+        yield self.check, 'title' , term
 
     def test_items_with_spaces(self):
         """Add feed and download item with spaces in title. """
@@ -186,4 +189,6 @@ class TestCaseFeedDownloads(BaseTestCase):
                        }
         for error, image in error_types.iteritems():
                 yield self.check_errors, error, image
+        self.click_library_tab("Downloading")
+        self.mainview.cancel_all_downloads()
 

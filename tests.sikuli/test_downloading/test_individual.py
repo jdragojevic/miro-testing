@@ -92,9 +92,8 @@ class TestCaseIndividualDownloads(BaseTestCase):
 
     @attr('torrent')
     def test_torrent_download(self):
-        url = ("http://bitlove.org/jed/test-feed-with-spaces2/"
-               "video%20with%20spaces2.mov.torrent")
-        title = 'video'
+        url = "http://bitlove.org/jed/feed1/py1.mov.torrent"
+        title = 'py1'
         self.download_and_locate(url, title)
         yield self.check, 'playback', title
         yield self.check, 'title' , title

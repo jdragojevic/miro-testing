@@ -34,5 +34,5 @@ class TestCasePodcastSettings(BaseTestCase):
         self.mainview.open_podcast_settings()
         self.dialog.change_podcast_settings(option="Podcast Items",
                                             setting="Keep 0")
-        self.mainview.click_library_tab("Podcasts")
+        self.sidebar.click_library_tab("Podcasts")
         assert_equal(5, self.mainview.count_images(img="my feed"))
