@@ -21,7 +21,7 @@ class TestCasePodcastSearching(BaseTestCase):
         cls.mainview = MainView(cls.reg)
         cls.dialog = Dialogs(cls.reg)
         subscribe_file = (os.path.abspath(os.path.join('tests.sikuli',
-                             'test_podcasts', 'podcast_search_feeds.miro')))
+                             'test_searching', 'podcast_search_feeds.miro')))
         cls.dialog.import_opml(subscribe_file)
 
     def test_save_search_feed(self):
@@ -43,7 +43,7 @@ class TestCasePodcastSearching(BaseTestCase):
 
         feed = "ThreeBlip"
         term = "Joo Joo"
-        title = "Joo Joo"
+        title = "Joo"
         self.sidebar.click_podcast(feed)
         self.mainview.tab_search(term)
         self.mainview.save_as_a_podcast()

@@ -20,9 +20,6 @@ class BaseTestCase(object):
         cls.sysos = [o for o in oses if o in str(Env.getOS())][0]
         cls.set_image_dirs()
         cls.miro_app = cls.launch_miro()
-        
-
-        print 'setting up the image regions'
         cls.reg = cls.get_regions()
 
     @classmethod
@@ -40,7 +37,7 @@ class BaseTestCase(object):
         if cls.sysos == 'WINDOWS':
             subprocess.Popen(r'TASKKILL /F /IM Miro.exe')
         else:
-            os.system("killall -v -I miro")
+            os.system("killall -v -I miro.real miro")
 
     @classmethod
     def set_image_dirs(cls):
@@ -105,9 +102,10 @@ class BaseTestCase(object):
 
     @classmethod
     def reset_db(cls, db=None):
+        cls.logger.info('Resetting the db to %s' % db)
         if db == None:
             l = os.path.abspath(os.getcwd())
-            db = os.path.join(l, 'Data', 'databases', 'empty_db')
+            db = os.path.join(l, 'Data', 'databases', 'empty_db_%s' % cls.sysos)
             cls.logger.info(db)
         curr_db = cls.get_db()
         cls.logger.info(curr_db)

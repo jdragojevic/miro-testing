@@ -24,15 +24,15 @@ class TestCasePodcastSettings(BaseTestCase):
         url = "http://bluesock.org/~willg/cgi-bin/newitemsfeed.cgi"
         feed = "my feed"
         self.sidebar.add_feed(url, feed)
-        self.sidebar.click_library_tab("Podcasts")
-        self.mainview.tab_search("my feed")
         self.mainview.toggle_list()
-        self.sidebar.click_podcast(feed)
         for x in range(0,3):
             self.sidebar.shortcut("r")
+            exists(self.mainview.m('status-icon-new.png'), 5)
             time.sleep(3)
         self.mainview.open_podcast_settings()
         self.dialog.change_podcast_settings(option="Podcast Items",
                                             setting="Keep 0")
         self.sidebar.click_library_tab("Podcasts")
-        assert_equal(5, self.mainview.count_images(img="my feed"))
+        self.mainview.tab_search("my feed")
+        self.mainview.toggle_list()
+        assert_equal(5, self.mainview.count_images(img="status-icon-new.png"))

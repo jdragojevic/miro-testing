@@ -63,8 +63,8 @@ class TestCaseIndividualDownloads(BaseTestCase):
 
     def test_file_download(self):
         """Download a file from a url."""
-        url = 'http://qa.pculture.org/amara_tests/jaws.mp4'
-        title = "jaws"
+        url = 'http://qa.pculture.org/amara_tests/Birds_short.oggtheora.ogg'
+        title = "Birds"
         self.download_and_locate(url, title)
         yield self.check, 'playback', title
         yield self.check, 'thumbnail'
@@ -107,9 +107,7 @@ class TestCaseIndividualDownloads(BaseTestCase):
                "%2F%2Ftracker.ccc.de%3A80")
         self.dialog.download_from_a_url(url)
         self.sidebar.click_library_tab('Downloading')
-        self.mainview.tab_search('Stargazer')
-        time.sleep(10)
-        self.check_downloading()
+        self.check_downloading('Stargazer')
         self.mainview.cancel_all_downloads()
 
     @attr('torrent')

@@ -124,8 +124,7 @@ class TestCaseFeedDownloads(BaseTestCase):
     def test_feed_nonascii_titles(self):
         """Add feed and download item with non-ascii titles. """
         feed = "UNICODE"
-        title = "kerta"
-        term = "1991"
+        title = "El"
         thumb = "non_ascii_item.png"
 
         self.mainview.tab_search(term)
@@ -134,7 +133,7 @@ class TestCaseFeedDownloads(BaseTestCase):
         self.mainview.wait_download_complete()
         yield self.check, 'playback', title
         yield self.check, 'thumbnail', thumb
-        yield self.check, 'title' , term
+        yield self.check, 'title' , title
 
     def test_items_with_spaces(self):
         """Add feed and download item with spaces in title. """
@@ -146,7 +145,7 @@ class TestCaseFeedDownloads(BaseTestCase):
         self.mainview.wait_download_complete()
         for x in titles:
             self.mainview.tab_search(x)
-            yield self.check, 'title', 'Video %s' % str(titles.index(x)+1)
+            yield self.check, 'title', 'Video'
 
     @attr('slow')
     def test_passworded_item(self):

@@ -302,8 +302,7 @@ class Dialogs(MiroApp):
             type(Key.ENTER)
 
     def password_dialog(self):
-        mr = Region(self.mtb.above(100).below())
-        return mr.exists("Username",30)
+        return self.m.exists("Username",30)
 
     def http_auth(self, username="tester", passw="pcfdudes"):
         if not self.password_dialog():

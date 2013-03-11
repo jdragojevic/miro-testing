@@ -6,7 +6,6 @@
 		<dateModified>Mon, 11 Feb 2013 05:36:05 -0500;</dateModified>
 	</head>
 	<body>
-
 	    <outline text="TWO STUPID" 
         	     type="rss" 
         	     version="RSS2" 
@@ -19,6 +18,5 @@
 	             type="rss" 
                      version="RSS2" 
 	             xmlUrl="http://qa.pculture.org/feeds_test/3blipvideos.xml"/>
-
-    </body>
+        </body>
 </opml>

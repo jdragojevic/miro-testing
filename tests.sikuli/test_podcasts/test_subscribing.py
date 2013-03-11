@@ -64,11 +64,8 @@ class TestCaseSubscribePodcasts(BaseTestCase):
         url = "http://qa.pculture.org/feeds_test/no-enclosures.rss"
         feed = "NO ENCLOSURES"
         self.sidebar.add_feed(url, feed)
-        data_checks = {'description': 'should work',
-                       'title': 'Video',
-                      }
-        for d in data_checks.items():
-            yield self.check_podcast_metadata, d
+        data_checks = ('title', 'Video')
+        yield self.check_podcast_metadata, data_checks
         yield self.item_not_present, "second test"
 
 
