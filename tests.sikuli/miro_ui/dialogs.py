@@ -221,19 +221,19 @@ class Dialogs(MiroApp):
         return filepath
 
     def change_podcast_settings(self, option, setting):
-        find("Expire Items")
-        p1 = Region(getLastMatch().nearby(800))
+        self.m.exists("Expire")
+        p1 = Region(self.m.getLastMatch().nearby(800))
         p1.find(option)
         click(p1.getLastMatch().right(100))
-        if not p1.exists(setting):
-            type(Key.PAGE_DOWN)
-        if not p1.exists(setting):
-            type(Key.PAGE_UP)
         if setting == "Keep 0":
             type(Key.DOWN)
             time.sleep(1)
             type(Key.ENTER)
         else:
+            if exists(setting):
+                type(Key.PAGE_DOWN)
+            if not p1.exists(setting):
+                type(Key.PAGE_UP)
             p1.click(setting)
         time.sleep(2)
         p1.click("button_done.png")
@@ -295,8 +295,12 @@ class Dialogs(MiroApp):
         self.type_a_path(filename)
 
     def import_opml(self, opml_path):
-        self.t.click("idebar")
-        self.t.click("Import")
+        self.tl.click("idebar")
+        if self.tl.exists("Export"):
+            r = self.tl.getLastMatch().above(40)
+            r.click('Import')
+        else:
+            raise ValueError("Export not found")
         self.type_a_path(opml_path)
         if exists("imported", 15):
             type(Key.ENTER)

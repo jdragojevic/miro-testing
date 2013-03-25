@@ -9,7 +9,9 @@ from miro_ui.sidebar_tab import SidebarTab
 from miro_ui.main_view import MainView
 from miro_ui.dialogs import Dialogs
 
-@attr(tags=['podcast'])
+
+@attr('settings')
+@attr('podcast')
 class TestCasePodcastSettings(BaseTestCase):
     @classmethod
     def setUpClass(cls):
@@ -27,12 +29,10 @@ class TestCasePodcastSettings(BaseTestCase):
         self.mainview.toggle_list()
         for x in range(0,3):
             self.sidebar.shortcut("r")
-            exists(self.mainview.m('status-icon-new.png'), 5)
-            time.sleep(3)
+            self.mainview.m.exists('status-icon-new.png', 5)
+            time.sleep(2)
         self.mainview.open_podcast_settings()
         self.dialog.change_podcast_settings(option="Podcast Items",
                                             setting="Keep 0")
-        self.sidebar.click_library_tab("Podcasts")
-        self.mainview.tab_search("my feed")
-        self.mainview.toggle_list()
-        assert_equal(5, self.mainview.count_images(img="status-icon-new.png"))
+        time.sleep(3)
+        assert_equal(5, self.mainview.count_images(img="newly.png"))

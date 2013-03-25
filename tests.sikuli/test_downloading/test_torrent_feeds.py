@@ -3,6 +3,7 @@ import time
 
 from nose.tools import assert_true, assert_false, assert_equal
 from nose.plugins.attrib import attr
+from nose.plugins.skip import SkipTest
 
 from sikuli.Sikuli import *
 
@@ -97,6 +98,8 @@ class TestCaseTorrentFeeds(BaseTestCase):
                       'VODO+Mixtape+%231+%282010+Xvid%29.torrent')
         self.logger.info('Download Mixtape item from VODO feed')
         self.sidebar.add_feed(feed_url, feed)
+        if exists("compatible",45):
+            raise SkipTest("Vodo feed is down")
         self.mainview.tab_search(title)
         self.mainview.download_all_items()
         self.sidebar.click_library_tab("Downloading")
