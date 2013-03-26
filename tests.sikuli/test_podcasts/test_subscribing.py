@@ -93,11 +93,11 @@ class TestCaseSubscribePodcasts(BaseTestCase):
 
         """
         self.remove_http_auth_file()
-        feed = "PW PROTECTED"
+        feed = "PROTECT"
         url = 'http://qa.pculture.org/feeds_test/password.rss'
         self.sidebar.add_feed(url, feed, click_feed=False)
         self.dialog.http_auth('tester', 'pcf-is-the-best')
         assert_true(self.dialog.password_dialog())
         self.dialog.http_auth('pcf', 'pcf.miro')
-        assert_true(self.sidebar.exists_podcast(feed[1:]))
+        assert_true(self.sidebar.exists_podcast(feed))
 

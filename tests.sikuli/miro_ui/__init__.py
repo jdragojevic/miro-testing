@@ -145,19 +145,21 @@ class MiroApp(object):
         return d
 
     @classmethod
-    def count_images(self, img, region=None):
+    def count_images(self, img, search_reg=None):
         """Counts the number of images present on the screen or region.
 
         """
-        if region is None:
-            region = self.screen_region()
+        self.logger.info('Counting the number of %s displayed' % img)
+        if search_reg is None:
+            search_reg = self.screen_region()
         mm = []
-        f = region.findAll(img) # find all matches
-        while f.hasNext(): # loop as long there is a first and more matches
-            print "found 1"
-            mm.append(f.next())     # access next match and add to mm
-            f.destroy() # release the memory used by finder
-        return (len(mm))
+        if search_reg.exists(img):
+            f = search_reg.findAll(img) # find all matches
+            while f.hasNext(): # loop as long there is a first and more matches
+                self.logger.info("found 1")
+                mm.append(f.next())     # access next match and add to mm
+                f.destroy() # release the memory used by finder
+            return (len(mm))
 
 #####################KEEPERS ABOVE THIS LINE ##############################################
 

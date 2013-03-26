@@ -10,7 +10,6 @@ from miro_ui.main_view import MainView
 from miro_ui.dialogs import Dialogs
 
 
-@attr('current')
 @attr('podcast')
 class TestCaseDeletePodcasts(BaseTestCase):
     @classmethod
