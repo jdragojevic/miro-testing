@@ -37,7 +37,6 @@ class TestCaseWebSearching(BaseTestCase):
                     "YouTube": "cosmicomics",
                     "User": 'janetefinn',
                     "DailyMotion": "Russia",
-                    "Google": "Toronto",
                     "5min": "eat fire",
                     "Search All": "shark"}
 
