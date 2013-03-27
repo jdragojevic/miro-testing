@@ -296,11 +296,12 @@ class Dialogs(MiroApp):
 
     def import_opml(self, opml_path):
         self.tl.click("idebar")
-        if self.tl.exists("Export"):
-            r = self.tl.getLastMatch().above(40)
-            r.click('Import')
-        else:
-            raise ValueError("Export not found")
+        self.tl.click("Import")
+        #if self.tl.exists("Export"):
+        #    r = self.tl.getLastMatch().above(40).right(200)
+        #    r.click('OPML')
+        #else:
+        #    raise ValueError("Export not found")
         self.type_a_path(opml_path)
         if exists("imported", 15):
             type(Key.ENTER)
