@@ -23,8 +23,8 @@ class TestCaseFeedDownloads(BaseTestCase):
         cls.sidebar = SidebarTab(cls.reg)
         cls.mainview = MainView(cls.reg)
         cls.dialog = Dialogs(cls.reg)
-        subscribe_file = (os.path.abspath(os.path.join('tests.sikuli',
-                             'test_downloading', 'dl_feeds.miro')))
+        subscribe_file = (os.path.abspath(os.path.join('Data',
+                         'dl_feeds.miro')))
         cls.dialog.import_opml(subscribe_file)
 
     def check(self, check, *args):

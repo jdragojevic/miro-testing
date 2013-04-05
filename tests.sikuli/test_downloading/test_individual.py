@@ -64,7 +64,7 @@ class TestCaseIndividualDownloads(BaseTestCase):
     def test_file_download(self):
         """Download a file from a url."""
         url = 'http://qa.pculture.org/amara_tests/Birds_short.oggtheora.ogg'
-        title = "Birds"
+        title = "Bird"
         self.download_and_locate(url, title)
         yield self.check, 'playback', title
         yield self.check, 'thumbnail'

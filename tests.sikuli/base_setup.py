@@ -36,8 +36,10 @@ class BaseTestCase(object):
         time.sleep(3)
         if cls.sysos == 'WINDOWS':
             subprocess.Popen(r'TASKKILL /F /IM Miro.exe')
+        elif cls.sysos == 'MAC':
+            os.system('killall Miro')
         else:
-            os.system("killall -v -I miro.real miro")
+            os.system("killall miro.real miro")
 
     @classmethod
     def set_image_dirs(cls):

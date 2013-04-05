@@ -137,7 +137,7 @@ class Dialogs(MiroApp):
         pulldown_menus = ["Rating", "Type", "Video Kind"]
         self.shortcut('i')
         exists(self._EDIT_ITEM_DIALOG, 5)
-        metar = Region(getLastMatch()).below(500)
+        metar = Region(getLastMatch()).below(600)
         for meta_field, meta_value in new_metadata:
             metar.find(meta_field)
             if meta_field == 'Name':
@@ -152,7 +152,7 @@ class Dialogs(MiroApp):
                 type(Key.ENTER)
             else:
                 type(meta_value)
-
+        
         metar.click(self._OK)
 
     def edit_item_video_metadata_bulk(self,new_metadata_list):
@@ -236,7 +236,10 @@ class Dialogs(MiroApp):
                 type(Key.PAGE_UP)
             p1.click(setting)
         time.sleep(2)
-        p1.click("button_done.png")
+        try:
+            p1.click("button_done.png")
+        except:
+            type(Key.ENTER)
 
     def new_search_feed(self, term, radio, source, defaults=False, watched=False):
         self.logger.info("Opening the New Search Feed dialog.")

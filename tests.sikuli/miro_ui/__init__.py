@@ -125,7 +125,10 @@ class MiroApp(object):
     @classmethod
     def type_a_path(self, file_path):
         if self.sysos == "MAC":
-            type(file_path +"\n")
+            type(file_path)
+            type(Key.ENTER)
+            time.sleep(1)
+            type(Key.ENTER)
         else:
             if not exists("Location",5):
                 click('Desktop')

@@ -57,7 +57,8 @@ class TestCaseWebSearching(BaseTestCase):
         time.sleep(4)
         self.sidebar.click_library_tab("Podcasts")
         self.sidebar.click_library_tab("Search")
-        assert_true(exists(term.upper()))
+        visible_search = term.split()[0]
+        assert_true(exists(visible_search.upper()))
 
 
     def test_menu__new_search_feed(self):

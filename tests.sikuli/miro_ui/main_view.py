@@ -25,7 +25,7 @@ class MainView(MiroApp):
     _PLAYBACK_NORMAL = Pattern('item-renderer-play.png')
 
     #PODCAST TABS
-    _SELECTED_PODCASTS = {'folder': 'New Folder',
+    _SELECTED_PODCASTS = {'folder': Pattern('NewFolder.png'),
                           'delete': Pattern('button_mv_delete_all.png')}
     #DOWNLOADING TAB
     _CANCEL_ALL_DOWNLOADS = Pattern('download-cancel.png')
@@ -41,7 +41,8 @@ class MainView(MiroApp):
         if self.m.exists(button, 4):
             click(self.m.getLastMatch())
         else:
-            self.fail("Can't find %s button in main view" % button)
+            self.logger.info("Can't find %s button in main view" % button)
+            raise ValueError('Image not found for %s' % button)
 
 
     def hybrid_filter(self):
@@ -219,7 +220,7 @@ class MainView(MiroApp):
         if self.mtb.exists(self._SEARCH["clear"], 5): # this should always be found on gtk
             treg = Region(self.mtb.getLastMatch().left(350))
         elif self.mtb.exists(self._SEARCH['inactive'] ,5):
-            treg = Region(reg.mtb.getLastMatch().left(350))
+            treg = Region(self.mtb.getLastMatch().left(350))
         treg.setH(treg.getH()+14)
         treg.setY(treg.getY()-8)
         if treg.exists(Pattern("list-view.png").similar(.91),3):

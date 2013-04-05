@@ -44,8 +44,8 @@ class TestCaseFolders(BaseTestCase):
         cls.dialog = Dialogs(cls.reg)
 
     def add_feeds_opml(self):
-        subscribe_file = (os.path.abspath(os.path.join('tests.sikuli',
-                             'test_podcasts', 'podcast_folders.miro')))
+        subscribe_file = (os.path.abspath(os.path.join('Data',
+                          'podcast_folders.opml')))
         self.dialog.import_opml(subscribe_file)
 
     def test_create_folder(self):
